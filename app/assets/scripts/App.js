@@ -1,1 +1,1 @@
-alert('murderer!!!');
+import '../styles/styles.css';

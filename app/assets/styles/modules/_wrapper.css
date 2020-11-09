@@ -4,4 +4,12 @@
   margin-right: auto;
   padding-left: 18px;
   padding-right: 18px;
+
+  &--medium {
+    max-width: 976px;
+  }
+
+  .wrapper {
+    padding: 0;
+  }
 }

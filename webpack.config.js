@@ -1,5 +1,7 @@
 const currentTask = process.env.npm_lifecycle_event;
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const postcssPlugins = [
   require('postcss-import'),
@@ -57,13 +59,28 @@ if (currentTask == 'dev') {
   };
   config.mode = 'development';
 }
+
 if (currentTask == 'build') {
   // code specific to build
   config.output = {
-    filename: 'bundled.js',
+    filename: '[name].[chunkhash].js',
+    chunkFilename: '[name].[chunkhash].js',
     path: path.resolve(__dirname, 'dist'),
   };
   config.mode = 'production';
+  config.optimization = {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          enforce: true,
+          chunks: 'all',
+        },
+      },
+    },
+  };
+  config.plugins = [new CleanWebpackPlugin()];
 }
 
 let deleteMeLater = {};

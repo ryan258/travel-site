@@ -14,6 +14,15 @@ const postcssPlugins = [
   require('autoprefixer'),
 ];
 
+class RunAfterCompile {
+  apply(compiler) {
+    compiler.hooks.done.tap('Copy images', function () {
+      // args: directory to copy, where to copy it to
+      fse.copySync('./app/assets/images', './dist/assets/images');
+    });
+  }
+}
+
 let cssConfig = {
   test: /\.css$/i,
   use: [
@@ -102,7 +111,8 @@ if (currentTask == 'build') {
   };
   config.plugins.push(
     new CleanWebpackPlugin(),
-    new MiniCssExtractPlugin({ filename: 'styles.[chunkhash].css' })
+    new MiniCssExtractPlugin({ filename: 'styles.[chunkhash].css' }),
+    new RunAfterCompile()
   );
 }
 

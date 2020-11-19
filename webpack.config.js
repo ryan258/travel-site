@@ -3,6 +3,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const fse = require('fs-extra');
 
 const postcssPlugins = [
   require('postcss-import'),
@@ -28,16 +29,24 @@ let cssConfig = {
   ],
 };
 
+// get the array of items in /app and filter it
+let pages = fse
+  .readdirSync('./app')
+  .filter(function (file) {
+    return file.endsWith('.html');
+  })
+  .map(function (page) {
+    return new HtmlWebpackPlugin({
+      filename: page,
+      template: `./app/${page}`,
+    });
+  });
+
 let config = {
   // any same or shared config
   // between environments can be here
   entry: './app/assets/scripts/App.js',
-  plugins: [
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: './app/index.html',
-    }),
-  ],
+  plugins: pages,
   module: {
     rules: [
       cssConfig,

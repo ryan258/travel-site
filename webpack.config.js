@@ -12,27 +12,28 @@ const postcssPlugins = [
   require('autoprefixer'),
 ];
 
+let cssConfig = {
+  test: /\.css$/i,
+  use: [
+    'css-loader',
+    {
+      loader: 'postcss-loader?url=false',
+      options: {
+        postcssOptions: {
+          plugins: postcssPlugins,
+        },
+      },
+    },
+  ],
+};
+
 let config = {
   // any same or shared config
   // between environments can be here
   entry: './app/assets/scripts/App.js',
   module: {
     rules: [
-      {
-        test: /\.css$/i,
-        use: [
-          'style-loader',
-          'css-loader',
-          {
-            loader: 'postcss-loader?url=false',
-            options: {
-              postcssOptions: {
-                plugins: postcssPlugins,
-              },
-            },
-          },
-        ],
-      },
+      cssConfig,
       {
         test: /\.(png|jpg)&/,
         loader: 'url-loader',
@@ -43,6 +44,7 @@ let config = {
 
 if (currentTask == 'dev') {
   // code specific to dev
+  cssConfig.use.unshift('style-loader');
   config.output = {
     filename: 'bundled.js',
     path: path.resolve(__dirname, 'app'),
@@ -62,6 +64,8 @@ if (currentTask == 'dev') {
 
 if (currentTask == 'build') {
   // code specific to build
+  cssConfig.use.unshift(MiniCssExtractPlugin.loader);
+  postcssPlugins.push(require('cssnano'));
   config.output = {
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js',
@@ -80,7 +84,10 @@ if (currentTask == 'build') {
       },
     },
   };
-  config.plugins = [new CleanWebpackPlugin()];
+  config.plugins = [
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({ filename: 'styles.[chunkhash].css' }),
+  ];
 }
 
 let deleteMeLater = {};

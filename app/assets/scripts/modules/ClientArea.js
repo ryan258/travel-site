@@ -1,54 +1,40 @@
-import Axios from 'axios';
+exports.handler = function (event, context, callback) {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
-class ClientArea {
-  constructor() {
-    this.injectHTML();
-    this.form = document.querySelector('.client-area__form');
-    this.field = document.querySelector('.client-area__input');
-    this.contentArea = document.querySelector('.client-area__content-area');
-    this.events();
-  }
-
-  events() {
-    this.form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.sendRequest();
+  if (event.httpMethod !== 'POST') {
+    return callback(null, {
+      statusCode: 200,
+      headers,
+      body: 'This was not a POST request',
     });
   }
 
-  sendRequest() {
-    // here we communicate with the cloud function
-    Axios.post('/.netlify/functions/secret-area', {
-      password: this.field.value,
-    })
-      .then((response) => {
-        this.form.remove();
-        this.contentArea.innerHTML = response.data;
-      })
-      .catch(() => {
-        this.contentArea.innerHTML = `<p class="client-area__error">That is not the correct secret phrase.</p>`;
-        this.field.value = '';
-        this.field.focus();
-      });
+  const secretContent = `
+  <h3>Welcome To The Secret Area</h3>
+  <p>Here we can tell you that the sky is <strong>blue</strong>, and two plus two equals four.</p>
+  `;
+
+  let body;
+
+  if (event.body) {
+    body = JSON.parse(event.body);
+  } else {
+    body = {};
   }
 
-  injectHTML() {
-    document.body.insertAdjacentHTML(
-      'beforeend',
-      `
-    <div class="client-area">
-    <div class="wrapper wrapper--medium">
-      <h2 class="section-title section-title--blue">Secret Client Area</h2>
-      <form class="client-area__form" action="">
-        <input class="client-area__input" type="text" placeholder="Enter the secret phrase">
-        <button class="btn btn--orange">Submit</button>
-      </form>
-      <div class="client-area__content-area"></div>
-    </div>
-  </div>
-    `
-    );
+  if (body.password == 'javascript') {
+    callback(null, {
+      statusCode: 200,
+      headers,
+      body: secretContent,
+    });
+  } else {
+    callback(null, {
+      statusCode: 401,
+      headers,
+    });
   }
-}
-
-export default ClientArea;
+};

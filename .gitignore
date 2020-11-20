@@ -1,3 +1,6 @@
+docs/
+dist/
+
 # Numerous always-ignore extensions
 *.diff
 *.err

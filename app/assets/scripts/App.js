@@ -3,7 +3,9 @@ import 'lazysizes';
 import MobileMenu from './modules/MobileMenu';
 import RevealOnScroll from './modules/RevealOnScroll';
 import StickyHeader from './modules/StickyHeader';
-// alert('testing CWP!!!!!!!!');
+import ClientArea from './modules/ClientArea';
+
+new ClientArea();
 
 new StickyHeader();
 

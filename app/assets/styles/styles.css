@@ -3,6 +3,7 @@
 @import 'base/_mixins';
 @import 'base/_global';
 @import 'modules/_btn';
+@import 'modules/_client-area';
 @import 'modules/_feature-item';
 @import 'modules/_generic-content-container';
 @import 'modules/_headline';

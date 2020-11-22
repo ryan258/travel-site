@@ -63,6 +63,16 @@ let config = {
         test: /\.(png|jpg)&/,
         loader: 'url-loader',
       },
+      {
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-react', '@babel/preset-env'],
+          },
+        },
+      },
     ],
   },
 };
@@ -89,16 +99,7 @@ if (currentTask == 'dev') {
 
 if (currentTask == 'build') {
   // code specific to build
-  config.module.rules.push({
-    test: /\.js$/,
-    exclude: /(node_modules)/,
-    use: {
-      loader: 'babel-loader',
-      options: {
-        presets: ['@babel/preset-env'],
-      },
-    },
-  });
+  // config.module.rules.push();
   cssConfig.use.unshift(MiniCssExtractPlugin.loader);
   postcssPlugins.push(require('cssnano'));
   config.output = {
